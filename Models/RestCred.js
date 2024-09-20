@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const validator = require("validator");
 const bcrypt = require("bcryptjs");
 
-const userSchema = new mongoose.Schema({
+const RestCredSchema = mongoose.Schema({
   name: {
     type: String,
     required: true,
@@ -19,32 +19,28 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
     minlength: 8,
+    select: false,
   },
-  favRestaurants: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Restaurant",
-    },
-  ],
-  cart:{
-    type:mongoose.Schema.Types.ObjectId,
-    ref:"Cart"
-  }
+  RestaurntDetails: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Restaurant",
+  },
 });
 
-userSchema.pre("save", async function (next) {
-  if (!this.isModified("password")) return next(); // Only hash if the password is new or modified
+RestCredSchema.pre("save", async function (next) {
+  if (!this.isModified("password")) return next();
   this.password = await bcrypt.hash(this.password, 12);
   next();
 });
 
-userSchema.methods.correctPassword = async function (
+// Password comparison method
+RestCredSchema.methods.correctPassword = async function (
   candidatePassword,
   userPassword
 ) {
   return await bcrypt.compare(candidatePassword, userPassword);
 };
 
-const User = mongoose.model("users", userSchema);
+const RestCred = mongoose.model("restCreds", RestCredSchema);
 
-module.exports = User;
+module.exports = RestCred;
