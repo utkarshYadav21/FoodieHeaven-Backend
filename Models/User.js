@@ -23,7 +23,7 @@ const userSchema = new mongoose.Schema({
   favRestaurants: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Restaurant",
+      ref: "restCreds",
     },
   ],
   cart:{
